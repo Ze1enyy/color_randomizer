@@ -15,51 +15,6 @@ class _ColorShooterState extends State<ColorShooter> {
   Color circleColor = Colors.red;
   int score = 0;
 
-  AnimatedPositioned circleRandom() {
-    double circHeight = 200;
-    double circWidth = 200;
-    double randomX =
-        Random().nextDouble() * MediaQuery.of(context).size.width * 0.75;
-    double randomY =
-        Random().nextDouble() * MediaQuery.of(context).size.height * 0.75;
-    return AnimatedPositioned(
-        duration: const Duration(milliseconds: 500),
-        left: randomX,
-        bottom: randomY,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              score += 100;
-              circleColor = Color.fromRGBO(
-                  Random().nextInt(255),
-                  Random().nextInt(255),
-                  Random().nextInt(255),
-                  Random().nextDouble());
-              backgroundColor = Color.fromRGBO(
-                  Random().nextInt(255),
-                  Random().nextInt(255),
-                  Random().nextInt(255),
-                  Random().nextDouble());
-
-              randomX = Random().nextDouble() *
-                  MediaQuery.of(context).size.width *
-                  0.75;
-              randomY = Random().nextDouble() *
-                  MediaQuery.of(context).size.height *
-                  0.75;
-            });
-          },
-          child: Container(
-            height: circHeight,
-            width: circWidth,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: circleColor,
-                border: Border.all()),
-          ),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,14 +27,18 @@ class _ColorShooterState extends State<ColorShooter> {
       body: AnimatedContainer(
         color: backgroundColor,
         duration: Duration(milliseconds: 500),
-        child: Stack(
+        child: Column(
           children: [
-            circleRandom(),
-            circleRandom(),
-            circleRandom(),
-            circleRandom(),
-            circleRandom(),
-            circleRandom(),
+            Flexible(
+              child: Stack(
+                children: List<Widget>.generate(
+                  5,
+                  (index) {
+                    return circleRandom();
+                  },
+                ),
+              ),
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -98,12 +57,8 @@ class _ColorShooterState extends State<ColorShooter> {
                               setState(() {
                                 score = 0;
                                 backgroundColor = Colors.white;
-                                double randomX = Random().nextDouble() *
-                                    MediaQuery.of(context).size.width *
-                                    0.75;
-                                double randomY = Random().nextDouble() *
-                                    MediaQuery.of(context).size.height *
-                                    0.75;
+                                posX();
+                                posY();
                               });
                             },
                           ),
@@ -111,8 +66,8 @@ class _ColorShooterState extends State<ColorShooter> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                child: Text("Your score is: $score"),
                                 margin: EdgeInsets.only(top: 10),
+                                child: Text("Your score is: $score"),
                               ),
                             ],
                           ),
@@ -127,5 +82,63 @@ class _ColorShooterState extends State<ColorShooter> {
         ),
       ),
     );
+  }
+
+  Color createCircColor() {
+    circleColor = Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
+        Random().nextInt(255), Random().nextDouble());
+    return circleColor;
+  }
+
+  Color createBgColor() {
+    backgroundColor = Color.fromRGBO(Random().nextInt(255),
+        Random().nextInt(255), Random().nextInt(255), Random().nextDouble());
+    return backgroundColor;
+  }
+
+  double posX() {
+    double randomX =
+        Random().nextDouble() * MediaQuery.of(context).size.width * 0.75;
+    return randomX;
+  }
+
+  double posY() {
+    double randomY =
+        Random().nextDouble() * MediaQuery.of(context).size.height * 0.75;
+    return randomY;
+  }
+
+  void increment() {
+    score += 100;
+  }
+
+  AnimatedPositioned circleRandom() {
+    double circHeight = 200;
+    double circWidth = 200;
+    posX();
+    posY();
+    return AnimatedPositioned(
+        duration: const Duration(milliseconds: 500),
+        left: posX(),
+        bottom: posY(),
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              increment();
+              createCircColor();
+              createBgColor();
+              posX();
+              posX();
+            });
+          },
+          child: Container(
+            height: circHeight,
+            width: circWidth,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: circleColor,
+                border: Border.all()),
+          ),
+        ));
   }
 }
