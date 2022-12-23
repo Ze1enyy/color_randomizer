@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import '../main.dart';
+
 class ColorShooter extends StatefulWidget {
   const ColorShooter({super.key});
 
@@ -10,8 +12,7 @@ class ColorShooter extends StatefulWidget {
   State<ColorShooter> createState() => _ColorShooterState();
 }
 
-class _ColorShooterState extends State<ColorShooter> {
-  Color backgroundColor = Colors.white;
+class _ColorShooterState extends State<ColorShooter> with RandomColor {
   Color circleColor = Colors.red;
   int score = 0;
 
@@ -25,7 +26,7 @@ class _ColorShooterState extends State<ColorShooter> {
         }),
       ),
       body: AnimatedContainer(
-        color: backgroundColor,
+        color: bgColor,
         duration: Duration(milliseconds: 500),
         child: Column(
           children: [
@@ -56,7 +57,7 @@ class _ColorShooterState extends State<ColorShooter> {
                             onPressed: () {
                               setState(() {
                                 score = 0;
-                                backgroundColor = Colors.white;
+                                bgColor = Colors.white;
                                 posX();
                                 posY();
                               });
@@ -84,16 +85,12 @@ class _ColorShooterState extends State<ColorShooter> {
     );
   }
 
-  Color createCircColor() {
-    circleColor = Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
-        Random().nextInt(255), Random().nextDouble());
+  Color changeCircColor() {
+    var r = Random().nextInt(255);
+    var g = Random().nextInt(255);
+    var b = Random().nextInt(255);
+    circleColor = Color.fromRGBO(r, g, b, Random().nextDouble());
     return circleColor;
-  }
-
-  Color createBgColor() {
-    backgroundColor = Color.fromRGBO(Random().nextInt(255),
-        Random().nextInt(255), Random().nextInt(255), Random().nextDouble());
-    return backgroundColor;
   }
 
   double posX() {
@@ -125,10 +122,10 @@ class _ColorShooterState extends State<ColorShooter> {
           onTap: () {
             setState(() {
               increment();
-              createCircColor();
-              createBgColor();
+              changeCircColor();
+              changeBgColor();
               posX();
-              posX();
+              posY();
             });
           },
           child: Container(

@@ -21,8 +21,7 @@ class ColorRandom extends StatefulWidget {
   State<ColorRandom> createState() => _ColorRandomState();
 }
 
-class _ColorRandomState extends State<ColorRandom> {
-  Color backgroundColor = Colors.white;
+class _ColorRandomState extends State<ColorRandom> with RandomColor {
   String text = 'Hey there';
 
   @override
@@ -37,18 +36,11 @@ class _ColorRandomState extends State<ColorRandom> {
       ),
       body: AnimatedContainer(
         duration: const Duration(seconds: 1),
-        decoration: BoxDecoration(color: backgroundColor),
+        decoration: BoxDecoration(color: bgColor),
         curve: Curves.linearToEaseOut,
         child: InkWell(
           onTap: () {
-            setState(() {
-              Random random = Random();
-              backgroundColor = Color.fromRGBO(
-                  random.nextInt(255),
-                  random.nextInt(255),
-                  random.nextInt(255),
-                  random.nextDouble());
-            });
+            changeBgColor();
           },
           child: Center(
             child: Stack(
@@ -78,5 +70,18 @@ class _ColorRandomState extends State<ColorRandom> {
         ),
       ),
     );
+  }
+}
+
+mixin RandomColor<T extends StatefulWidget> on State<T> {
+  Color bgColor = Colors.white;
+  Color changeBgColor() {
+    setState(() {
+      var r = Random().nextInt(255);
+      var g = Random().nextInt(255);
+      var b = Random().nextInt(255);
+      bgColor = Color.fromRGBO(r, g, b, Random().nextDouble());
+    });
+    return bgColor;
   }
 }
