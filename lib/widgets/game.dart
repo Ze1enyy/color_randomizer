@@ -1,15 +1,11 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'dart:math';
 
 import '../main.dart';
 
 class ColorShooter extends StatefulWidget {
-  const ColorShooter({super.key});
-
   @override
-  State<ColorShooter> createState() => _ColorShooterState();
+  _ColorShooterState createState() => _ColorShooterState();
 }
 
 class _ColorShooterState extends State<ColorShooter> with RandomColor {
@@ -20,22 +16,22 @@ class _ColorShooterState extends State<ColorShooter> with RandomColor {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: IconButton(
-        icon: Icon(Icons.arrow_back_outlined),
-        onPressed: (() {
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
           Navigator.of(context).pop();
-        }),
+        },
       ),
       body: AnimatedContainer(
-        color: bgColor,
+        color: changeBgColor(),
         duration: Duration(milliseconds: 500),
         child: Column(
           children: [
             Flexible(
               child: Stack(
-                children: List<Widget>.generate(
+                children: List.generate(
                   5,
                   (index) {
-                    return circleRandom();
+                    return randomCircle();
                   },
                 ),
               ),
@@ -57,9 +53,6 @@ class _ColorShooterState extends State<ColorShooter> with RandomColor {
                             onPressed: () {
                               setState(() {
                                 score = 0;
-                                bgColor = Colors.white;
-                                posX();
-                                posY();
                               });
                             },
                           ),
@@ -74,7 +67,7 @@ class _ColorShooterState extends State<ColorShooter> with RandomColor {
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -86,56 +79,51 @@ class _ColorShooterState extends State<ColorShooter> with RandomColor {
   }
 
   Color changeCircColor() {
-    var r = Random().nextInt(255);
-    var g = Random().nextInt(255);
-    var b = Random().nextInt(255);
-    circleColor = Color.fromRGBO(r, g, b, Random().nextDouble());
+    circleColor = Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
+        Random().nextInt(255), Random().nextDouble());
     return circleColor;
   }
 
-  double posX() {
+  Offset randomCirclePos() {
     double randomX =
-        Random().nextDouble() * MediaQuery.of(context).size.width * 0.75;
-    return randomX;
-  }
-
-  double posY() {
+        Random().nextDouble() * (MediaQuery.of(context).size.width - 200);
     double randomY =
-        Random().nextDouble() * MediaQuery.of(context).size.height * 0.75;
-    return randomY;
+        Random().nextDouble() * (MediaQuery.of(context).size.height - 200);
+    return Offset(randomX, randomY);
   }
 
   void increment() {
     score += 100;
   }
 
-  AnimatedPositioned circleRandom() {
+  AnimatedPositioned randomCircle() {
     double circHeight = 200;
     double circWidth = 200;
-    posX();
-    posY();
+
+    double randomX = Random().nextDouble() *
+        (MediaQuery.of(context).size.width - 2 * circWidth);
+    double randomY = Random().nextDouble() *
+        (MediaQuery.of(context).size.height - 2 * circHeight);
+
     return AnimatedPositioned(
-        duration: const Duration(milliseconds: 500),
-        left: posX(),
-        bottom: posY(),
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              increment();
-              changeCircColor();
-              changeBgColor();
-              posX();
-              posY();
-            });
-          },
-          child: Container(
-            height: circHeight,
-            width: circWidth,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: circleColor,
-                border: Border.all()),
-          ),
-        ));
+      duration: const Duration(milliseconds: 500),
+      left: randomX,
+      bottom: randomY,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            score += 100;
+            changeCircColor();
+            changeBgColor();
+          });
+        },
+        child: Container(
+          height: circHeight,
+          width: circWidth,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: circleColor, border: Border.all()),
+        ),
+      ),
+    );
   }
 }
